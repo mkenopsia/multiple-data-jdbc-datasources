@@ -1,21 +1,21 @@
 package com.example.multiple_datasources.config;
 
-import com.example.multiple_datasources.oltpRepository.OltpRepository;
+import com.example.multiple_datasources.oltp.repo.OltpRepository;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.jdbc.core.convert.Identifier;
-import org.springframework.data.jdbc.core.convert.JdbcConverter;
-import org.springframework.data.jdbc.core.convert.MappingJdbcConverter;
-import org.springframework.data.jdbc.core.convert.RelationResolver;
+import org.springframework.data.jdbc.core.convert.*;
+import org.springframework.data.jdbc.core.dialect.JdbcDialect;
 import org.springframework.data.jdbc.core.mapping.JdbcMappingContext;
+import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration;
+import org.springframework.data.jdbc.repository.config.DialectResolver;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
-import org.springframework.data.mapping.PersistentPropertyPath;
-import org.springframework.data.relational.core.mapping.RelationalPersistentProperty;
+import org.springframework.data.relational.core.dialect.Dialect;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -31,10 +31,9 @@ import javax.sql.DataSource;
 @EnableJdbcRepositories(
         basePackageClasses = OltpRepository.class,
         jdbcOperationsRef = "oltpNamedParameterJdbcOperations",
-        transactionManagerRef = "oltpTransactionManager",
-        basePackages = "com.example.multiple_datasources.oltpEntity"
+        transactionManagerRef = "oltpTransactionManager"
 )
-public class OltpJdbcConfig {
+public class OltpJdbcConfig extends AbstractJdbcConfiguration {
 
     @Bean("oltpDataSource")
     public DataSource oltpDataSource(final @Value("${spring.datasource.oltp.url}") String oltpUrl,
@@ -70,7 +69,7 @@ public class OltpJdbcConfig {
     final @Qualifier("oltpDataSource") DataSource dmDataSource) {
         DataSourceInitializer initializer = new DataSourceInitializer();
         initializer.setDataSource(dmDataSource);
-        DatabasePopulator databasePopulator = new ResourceDatabasePopulator(new ClassPathResource("schema.sql"));
+        DatabasePopulator databasePopulator = new ResourceDatabasePopulator(new ClassPathResource("schema_oltp.sql"));
         initializer.setDatabasePopulator(databasePopulator);
         return initializer;
     }

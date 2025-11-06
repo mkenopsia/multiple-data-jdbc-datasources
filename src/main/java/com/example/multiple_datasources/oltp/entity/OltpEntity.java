@@ -1,4 +1,4 @@
-package com.example.multiple_datasources.dmEntity;
+package com.example.multiple_datasources.oltp.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,12 +7,12 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table("TEST_TABLE_1")
+@Table("TEST_TABLE_OLTP")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class DmEntity {
+public class OltpEntity {
     @Id
     private Integer id;
 

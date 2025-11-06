@@ -1,19 +1,15 @@
 package com.example.multiple_datasources.config;
 
-import com.example.multiple_datasources.dmRepository.DmRepository;
+import com.example.multiple_datasources.dm.repo.DmRepository;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.jdbc.core.dialect.JdbcH2Dialect;
+import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
-import org.springframework.data.relational.core.dialect.Dialect;
-import org.springframework.data.relational.core.dialect.H2Dialect;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -28,11 +24,10 @@ import javax.sql.DataSource;
 @EnableJdbcRepositories(
         basePackageClasses = DmRepository.class,
         jdbcOperationsRef = "dmNamedParameterJdbcOperations",
-        transactionManagerRef = "dmTransactionManager",
-        basePackages = "com.example.multiple_datasources.dmEntity"
+        transactionManagerRef = "dmTransactionManager"
 )
 @Configuration
-public class DmJdbcConfig {
+public class DmJdbcConfig extends AbstractJdbcConfiguration {
 
     @Bean("dmDataSource")
     public DataSource dmDatasource(final @Value("${spring.datasource.dm.url}") String dmUrl,
@@ -42,9 +37,14 @@ public class DmJdbcConfig {
         dataSource.setJdbcUrl(dmUrl);
         dataSource.setUsername(dmUsername);
         dataSource.setPassword(dmPassword);
-//        dataSource.setDriverClassName("org.h2.Driver");
         return dataSource;
     }
+
+//    @Bean("dmDataSource")
+//    @ConfigurationProperties(prefix = "spring.datasource.dm")
+//    public DataSource dmDataSource() {
+//        return DataSourceBuilder.create().build();
+//    }
 
     @Bean("dmTransactionManager")
     public PlatformTransactionManager dmTransactionManager(final @Qualifier("dmDataSource") DataSource dataSource) {
@@ -67,7 +67,7 @@ public class DmJdbcConfig {
     public DataSourceInitializer dmDataSourceInitializer(final @Qualifier("dmDataSource") DataSource dmDataSource) {
         DataSourceInitializer initializer = new DataSourceInitializer();
         initializer.setDataSource(dmDataSource);
-        DatabasePopulator databasePopulator = new ResourceDatabasePopulator(new ClassPathResource("schema.sql"));
+        DatabasePopulator databasePopulator = new ResourceDatabasePopulator(new ClassPathResource("schema_dm.sql"));
         initializer.setDatabasePopulator(databasePopulator);
         return initializer;
     }

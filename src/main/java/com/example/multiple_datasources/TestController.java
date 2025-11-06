@@ -1,9 +1,9 @@
 package com.example.multiple_datasources;
 
-import com.example.multiple_datasources.dmEntity.DmEntity;
-import com.example.multiple_datasources.dmRepository.DmRepository;
-import com.example.multiple_datasources.oltpEntity.OltpEntity;
-import com.example.multiple_datasources.oltpRepository.OltpRepository;
+import com.example.multiple_datasources.dm.entity.DmEntity;
+import com.example.multiple_datasources.dm.repo.DmRepository;
+import com.example.multiple_datasources.oltp.entity.OltpEntity;
+import com.example.multiple_datasources.oltp.repo.OltpRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
