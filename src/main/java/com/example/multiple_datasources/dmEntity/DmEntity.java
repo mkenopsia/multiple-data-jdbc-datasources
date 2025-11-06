@@ -1,0 +1,20 @@
+package com.example.multiple_datasources.dmEntity;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
+
+@Table("TEST_TABLE_1")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+public class DmEntity {
+    @Id
+    private Integer id;
+
+    private String name;
+}
